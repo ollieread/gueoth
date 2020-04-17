@@ -101,9 +101,9 @@ class PathHelper
         return self::repoFile($repository, $repository->getGitDir() . DIRECTORY_SEPARATOR . $path, $make, $mode, $dirMode);
     }
 
-    public static function repoPath(Repository $repository, string $path = ''): string
+    public static function repoPath(Repository $repository, string ...$paths): string
     {
-        return self::path($repository->getWorkTree(), $path);
+        return self::path($repository->getWorkTree(), $paths);
     }
 
     public static function path(string ...$paths): string
