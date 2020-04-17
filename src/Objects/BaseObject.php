@@ -3,28 +3,46 @@
 namespace Gueoth\Objects;
 
 use Gueoth\Repository;
-use RuntimeException;
 
 abstract class BaseObject
 {
-    /**
-     * @var \Gueoth\Repository
-     */
-    protected Repository $repo;
+    protected Repository $repository;
+
+    private bool         $dirty = false;
 
     public function __construct(Repository $repo, $data = null)
     {
-        $this->repo = $repo;
-        $this->unserialize($data);
+        $this->repository = $repo;
+        $this->unserialise($data);
     }
 
-    public function serialise(): void
+    public function getRepository(): Repository
     {
-        throw new RuntimeException('Unimplemented');
+        return $this->repository;
     }
 
-    public function unserialise($data): void
+    abstract public function getType(): string;
+
+    abstract public function serialise(): string;
+
+    abstract public function unserialise($data): void;
+
+    protected function isDirty(): bool
     {
-        throw new RuntimeException('Unimplemented');
+        return $this->dirty;
+    }
+
+    protected function setDirty(): self
+    {
+        $this->dirty = true;
+
+        return $this;
+    }
+
+    protected function clean(): self
+    {
+        $this->dirty = false;
+
+        return $this;
     }
 }
