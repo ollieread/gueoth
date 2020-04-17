@@ -136,4 +136,9 @@ class Commit extends BaseObject
 
         return $this->parents;
     }
+
+    public function getMessage(): ?string
+    {
+        return $this->data->get('');
+    }
 }
