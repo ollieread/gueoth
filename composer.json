@@ -1,0 +1,26 @@
+{
+  "name": "ollieread/gueoth",
+  "description": "A git library written entirely in PHP",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "keywords": [
+    "git",
+    "php",
+    "git-php",
+    "php-git"
+  ],
+  "authors": [
+    {
+      "name": "ollieread",
+      "email": "me@ollieread.com"
+    }
+  ],
+  "require": {
+    "php": "^7.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Gueoth\\": "src/"
+    }
+  }
+}
