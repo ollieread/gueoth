@@ -92,12 +92,12 @@ class Commit extends BaseObject
         $this->parseCommit($content, $end + 1);
     }
 
-    public function getTree()
+    public function getTree(): string
     {
         return $this->data->get('tree');
     }
 
-    public function getTreeObject()
+    public function getTreeObject(): Tree
     {
         if ($this->tree === null) {
             $tree       = $this->getTree();
@@ -107,7 +107,7 @@ class Commit extends BaseObject
         return $this->tree;
     }
 
-    public function getParents()
+    public function getParents(): array
     {
         $parents = $this->data->get('parent');
 
