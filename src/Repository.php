@@ -137,21 +137,51 @@ class Repository
         return $this->trees->get($sha);
     }
 
+    public function readObjects(): void
+    {
+        $objects = PathHelper::dirContents(PathHelper::repoPath($this, $this->getGitDir(), 'objects'));
+
+        foreach ($objects as $objectPath) {
+            $object = $this->readObject($objectPath);
+
+            if ($object === null) {
+                throw new RuntimeException(sprintf('Unable to read object %s', $objectPath));
+            }
+
+            $this->placeObject(str_replace('/', '', $objectPath), $object);
+        }
+    }
+
+    public function getObjects(): array
+    {
+        return $this->objects->toArray();
+    }
+
+    public function getCommits(): array
+    {
+        return $this->commits->toArray();
+    }
+
     protected function readObject(string $sha): ?BaseObject
     {
-        $path = PathHelper::repoPath($this, ...ObjectHelper::path($sha));
+        if (strpos($sha, '/') === false) {
+            $path = PathHelper::gitPath($this, 'objects', ...ObjectHelper::path($sha));
+        } else {
+            $path = PathHelper::gitPath($this, 'objects', $sha);
+            $sha  = str_replace('/', '', $sha);
+        }
 
         if (! file_exists($path)) {
             return null;
         }
 
-        $rawContents = gzdecode(file_get_contents($path));
+        $rawContents = zlib_decode(file_get_contents($path));
 
         assert($spaceSeparator = strpos($rawContents, "\x20"), new InvalidArgumentException(sprintf('Invalid object file %s', $path)));
         assert($nullSeparator = strpos($rawContents, "\x00", $spaceSeparator), new InvalidArgumentException(sprintf('Invalid object file %s', $path)));
 
         $type = substr($rawContents, 0, $spaceSeparator);
-        $size = (int) hexdec(substr($rawContents, $spaceSeparator, $nullSeparator));
+        $size = (int) substr($rawContents, $spaceSeparator, $nullSeparator - $spaceSeparator);
 
         assert($size === (strlen($rawContents) - $nullSeparator - 1), new RuntimeException(sprintf('Malformed object %s: bad length', $sha)));
 
