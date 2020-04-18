@@ -35,7 +35,7 @@ class Commit extends BaseObject
             }
 
             foreach ($value as $v) {
-                $result .= $key . ' ' . (str_replace($v, "\n", "\n ")) . PHP_EOL;
+                $result .= $key . ' ' . (str_replace("\n", "\n ", $v)) . PHP_EOL;
             }
         }
 
@@ -55,26 +55,26 @@ class Commit extends BaseObject
         $space   = strpos($content, ' ', $start);
         $newline = strpos($content, "\n", $start);
 
-        if ($space === false || $newline === false) {
+        if ($space === false || $newline < $space) {
             assert($newline === $start, new InvalidArgumentException('Incorrectly formatted KVLM'));
             $this->data->put('', substr($content, $start + 1));
 
             return;
         }
 
-        $key = substr($content, $start, $space);
+        $key = substr($content, $start, ($space - $start));
         $end = $start;
 
         while (true) {
             $end = strpos($content, "\n", $end + 1);
 
-            if (substr($content, $end + 1) !== ord(' ')) {
+            if ($content[$end + 1] !== ord(' ')) {
                 break;
             }
         }
 
-        $value = substr($content, $space + 1, $end);
-        $value = str_replace($value, "\n ", "\n");
+        $value = substr($content, $space + 1, $end - ($space + 1));
+        $value = str_replace("\n ", "\n", $value);
 
         if ($this->data->hasKey($key)) {
             $currentValue = $this->data->get($key);
@@ -140,5 +140,10 @@ class Commit extends BaseObject
     public function getMessage(): ?string
     {
         return $this->data->get('');
+    }
+
+    public function __toString()
+    {
+        return $this->serialise();
     }
 }
