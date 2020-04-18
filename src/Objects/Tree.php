@@ -8,4 +8,14 @@ class Tree extends BaseObject
     {
         return 'tree';
     }
+
+    public function serialise(): string
+    {
+        // TODO: Implement serialise() method.
+    }
+
+    public function unserialise($data): void
+    {
+        // TODO: Implement unserialise() method.
+    }
 }
