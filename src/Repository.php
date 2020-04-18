@@ -15,6 +15,11 @@ use RuntimeException;
 
 class Repository
 {
+    public static function open(string $path): Repository
+    {
+        return new Repository($path, null, ConfigHelper::parseConfig(PathHelper::path($path, '.git', 'config')));
+    }
+
     protected string  $workTree;
 
     protected string  $gitDir;
