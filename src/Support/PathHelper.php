@@ -131,4 +131,25 @@ class PathHelper
 
         return self::findRepo($parent, $required);
     }
+
+    public static function dirContents(string $path, &$dirContents = [], ?string $prefix = null): array
+    {
+        $dir = scandir($path);
+
+        foreach ($dir as $file) {
+            if (in_array($file, ['.', '..'])) {
+                continue;
+            }
+
+            $filePath = self::path($path, $file);
+
+            if (is_file($filePath)) {
+                $dirContents[] = self::path($prefix, $file);
+            } else if (is_dir($filePath)) {
+                self::dirContents($filePath, $dirContents, $file);
+            }
+        }
+
+        return $dirContents;
+    }
 }
