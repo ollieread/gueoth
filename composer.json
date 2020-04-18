@@ -18,7 +18,8 @@
   "require": {
     "php": "^7.4",
     "ext-ds": "*",
-    "ext-zlib": "*"
+    "ext-zlib": "*",
+    "nesbot/carbon": "^2"
   },
   "require-dev": {
     "php-ds/php-ds": "1.2.0"
